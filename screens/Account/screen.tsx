@@ -1,16 +1,43 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFonts } from 'expo-font'
 
 import { useNavigation } from '@react-navigation/native'
 import { GreetingScreenNavigationProp } from '../../types.nav'
 import { useStatisticContext } from '../../сontext/context'
 import { useUserContext } from '../../сontext/contexUser'
+import supabase from '../../lib/supabase'
 
 const Category = () => {
   const { productsInCart } = useStatisticContext()
   const { user } = useUserContext()
+  const [learnWord, setLearnWord] = useState(0)
+  const [rightAnswer, setRightAnswer] = useState(0)
   const navigation = useNavigation<GreetingScreenNavigationProp>()
+
+  useEffect(() => {
+    getLearnWord()
+    getRightAnswers()
+  }, [])
+  async function getLearnWord() {
+    let { data, error } = await supabase.rpc('count_of_learned_words', {
+      id_input: 8,
+    })
+    setLearnWord(data)
+    console.log(learnWord)
+    if (error) console.error(error)
+    else console.log(data)
+  }
+
+  async function getRightAnswers() {
+    let { data, error } = await supabase.rpc('count_of_correct_answers', {
+      id_input: 8,
+    })
+    setRightAnswer(data)
+    if (error) console.error(error)
+    else console.log(data)
+  }
+
   return (
     <View style={{ position: 'relative' }}>
       <View style={{ alignItems: 'center' }}>
@@ -27,7 +54,6 @@ const Category = () => {
           }}
           style={styles.user}
         />
-
         <View style={{ alignItems: 'center' }}>
           <Text style={styles.statTittle}>{user.name}</Text>
         </View>
@@ -66,7 +92,7 @@ const Category = () => {
             <View style={styles.container}>
               <View style={styles.textView}>
                 <Text style={styles.title}>Изучено слов</Text>
-                <Text style={styles.desc}>{productsInCart}</Text>
+                <Text style={styles.desc}>{learnWord}</Text>
               </View>
             </View>
           </View>
@@ -122,8 +148,8 @@ const Category = () => {
             }}>
             <View style={styles.container}>
               <View style={styles.textView}>
-                <Text style={styles.title}>Викторин пройдено</Text>
-                <Text style={styles.desc}>{productsInCart}</Text>
+                <Text style={styles.title}>Правильных ответов</Text>
+                <Text style={styles.desc}>{rightAnswer}</Text>
               </View>
             </View>
           </View>

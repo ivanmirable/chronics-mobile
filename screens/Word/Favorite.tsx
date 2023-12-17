@@ -9,17 +9,23 @@ import { IWords } from '../../models/IWords'
 import { useUserContext } from '../../сontext/contexUser'
 import { WordForFavour } from './components/WordForFavour'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import IUser from '../../models/IUser'
 const CategoryScreen = () => {
   const { params } = useRoute<WordScreenRouteProp>()
   const { isLog } = useUserContext()
   const [word, setWord] = useState<IWords[]>([])
   const [del, setDel] = useState(false)
   const [query, setQuery] = useState('')
+  const [user, setUser] = useState<IUser>()
   const debouncedSearch = UseDebounce(query, 300)
 
   useEffect(() => {
     getFavouriteWords()
   }, [isLog])
+
+  useEffect(() => {
+    getUser()
+  }, [])
 
   useMemo(() => {
     const newQuery = query.trim()
@@ -35,6 +41,18 @@ const CategoryScreen = () => {
     if (error) console.error(error)
     else console.log(data)
   }
+  const getUser = async () => {
+    const jsonValue = await AsyncStorage.getItem('my-key')
+    jsonValue != null ? JSON.parse(jsonValue) : null
+    if (jsonValue != null) {
+      setUser(JSON.parse(jsonValue))
+      console.log(jsonValue)
+      console.log(user)
+    } else {
+      console.log('не пришел')
+    }
+  }
+
   async function SearchWord(word) {
     let { data, error } = await supabase
       .rpc('show_favorite_words', {

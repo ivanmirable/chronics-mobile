@@ -80,6 +80,7 @@ export const Question = () => {
           <>
             {answers.map((answer) => (
               <Answer
+                que_id={questuions[index].id}
                 load={load}
                 setLoad={setLoad}
                 setIndex={setIndex}

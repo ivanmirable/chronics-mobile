@@ -1,18 +1,47 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { IAnswer } from '../../../models/IAnswer'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import supabase from '../../../lib/supabase'
 interface PropsIAnswer {
   answer: IAnswer
   setIndex: Dispatch<SetStateAction<number>>
   setLoad: Dispatch<SetStateAction<boolean>>
   load: boolean
+  que_id: number
 }
-export const Answer = ({ answer, setIndex, setLoad, load }: PropsIAnswer) => {
+export const Answer = ({
+  answer,
+  setIndex,
+  setLoad,
+  load,
+  que_id,
+}: PropsIAnswer) => {
   const [right, setRight] = useState(Boolean)
   const [lay, setLay] = useState(Boolean)
+  useEffect(() => {
+    RememberAnswer()
+    UpdateAnswer()
+  }, [lay, right])
   const SetIndex = () => {
     setIndex((prev) => prev + 1)
   }
+
+  async function RememberAnswer() {
+    await supabase.rpc('answer_on_question', {
+      correct_input: right,
+      que_id: que_id,
+      user_id_input: 8,
+    })
+  }
+  async function UpdateAnswer() {
+    if (right) {
+      await supabase.rpc('update_answer_on_question', {
+        que_id: que_id,
+        user_id_input: 8,
+      })
+    }
+  }
+
   const Check = () => {
     if (answer.correct) {
       setRight(true)

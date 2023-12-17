@@ -31,6 +31,7 @@ export const GameZone = () => {
       }
     }
   }
+
   return (
     <View style={styles.main}>
       <View style={styles.container}>

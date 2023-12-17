@@ -7,15 +7,8 @@ import {
   Animated,
 } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import {
-  Word2ScreenRouteProp,
-  WordScreenNavigatorProp,
-  WordScreenRouteProp,
-} from '../../types.nav'
+import { Word2ScreenRouteProp } from '../../types.nav'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { useUserContext } from '../../сontext/contexUser'
-import supabase from '../../lib/supabase'
-import { AntDesign } from '@expo/vector-icons'
 
 export const Word2 = () => {
   const { params } = useRoute<Word2ScreenRouteProp>()
